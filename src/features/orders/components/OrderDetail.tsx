@@ -99,7 +99,7 @@ export function OrderDetail({ order: initialOrder, onRefresh }: OrderDetailProps
               {order.orderNumber}
             </h1>
             <p className="text-xs text-slate-500">
-              Placed on {new Date(order.createdAt).toLocaleDateString('en-US', {
+              Placed on {new Date(order.createdAt).toLocaleString('en-US', {
                 dateStyle: 'medium',
                 timeStyle: 'short',
               })}
