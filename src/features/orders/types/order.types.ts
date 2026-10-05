@@ -19,9 +19,11 @@ export interface OrderItemSnapshot {
 }
 
 export interface OrderPricing {
-  itemsSubtotal: number;
+  itemsSubtotal?: number;
+  subtotal?: number;
   shippingFee: number;
-  taxAmount: number;
+  taxAmount?: number;
+  tax?: number;
   totalAmount: number;
 }
 

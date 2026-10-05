@@ -191,7 +191,7 @@ export function OrderDetail({ order: initialOrder, onRefresh }: OrderDetailProps
             <div className="flex justify-between text-slate-600">
               <span>Items Subtotal</span>
               <span className="font-medium text-slate-900">
-                {formatCurrency(order.pricing.itemsSubtotal)}
+                {formatCurrency(order.pricing.subtotal ?? order.pricing.itemsSubtotal ?? 0)}
               </span>
             </div>
             <div className="flex justify-between text-slate-600">
@@ -207,7 +207,7 @@ export function OrderDetail({ order: initialOrder, onRefresh }: OrderDetailProps
             <div className="flex justify-between text-slate-600">
               <span>Estimated Tax</span>
               <span className="font-medium text-slate-900">
-                {formatCurrency(order.pricing.taxAmount)}
+                {formatCurrency(order.pricing.tax ?? order.pricing.taxAmount ?? 0)}
               </span>
             </div>
             <div className="flex justify-between border-t border-slate-200 pt-2.5 text-sm font-bold text-slate-900">
