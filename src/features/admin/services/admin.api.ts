@@ -1,6 +1,7 @@
 import { apiClient } from '@/lib/api/api-client';
 import { AdminMetrics, AdminOrder, InventoryItem } from '../types/admin.types';
 import { OrderStatus } from '@/features/orders/types/order.types';
+import { Product } from '@/features/products/types/product.types';
 
 export const adminApi = {
   getMetrics: async (): Promise<AdminMetrics> => {
@@ -58,4 +59,27 @@ export const adminApi = {
     const res = await apiClient<{ items: InventoryItem[] }>('/inventory/alerts/low-stock');
     return res.data.items || [];
   },
+
+  createProduct: async (payload: CreateProductPayload): Promise<Product> => {
+    const res = await apiClient<{ product: Product }>('/products', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    return res.data.product;
+  },
 };
+
+export interface CreateProductPayload {
+  title: string;
+  slug?: string;
+  description: string;
+  brand: string;
+  categoryId: string;
+  sku: string;
+  basePrice: number;
+  salePrice?: number;
+  images: { url: string; alt?: string; isPrimary?: boolean }[];
+  initialStock?: number;
+  attributes?: Record<string, string>;
+  status?: 'DRAFT' | 'ACTIVE' | 'ARCHIVED';
+}
