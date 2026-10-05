@@ -3,6 +3,7 @@
 import React, { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import {
   Sparkles,
@@ -17,11 +18,177 @@ import {
   Mail,
   Cpu,
   Lock,
+  Search,
+  Filter,
+  Check,
 } from 'lucide-react';
 import { productApi } from '@/features/products/services/product.api';
 import { ProductGrid } from '@/features/products/components/ProductGrid';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+
+interface CategoryMeta {
+  title: string;
+  department: string;
+  tagline: string;
+  description: string;
+  subcategories: { name: string; slug: string }[];
+  brands: string[];
+}
+
+const categoryMetaMap: Record<string, CategoryMeta> = {
+  home: {
+    title: 'Home & Living Collection',
+    department: 'Home & Workspace',
+    tagline: 'Precision culinary gear, ergonomic seating & modern living essentials',
+    description:
+      'Transform your daily environment with commercial-grade espresso machines and health-certified ergonomic task chairs engineered for peak daily focus.',
+    subcategories: [
+      { name: 'All Home & Living', slug: 'home' },
+      { name: 'Kitchen Appliances', slug: 'kitchen' },
+      { name: 'Office & Furniture', slug: 'office' },
+    ],
+    brands: ['Breville', 'Herman Miller'],
+  },
+  kitchen: {
+    title: 'Kitchen Appliances',
+    department: 'Home & Living',
+    tagline: 'Commercial performance in a compact footprint',
+    description:
+      'Precision automated touchscreen espresso machines, ThermoJet rapid heating, and artisan culinary instruments.',
+    subcategories: [
+      { name: 'All Home & Living', slug: 'home' },
+      { name: 'Kitchen Appliances', slug: 'kitchen' },
+      { name: 'Office & Furniture', slug: 'office' },
+    ],
+    brands: ['Breville'],
+  },
+  office: {
+    title: 'Office & Workspace',
+    department: 'Home & Living',
+    tagline: 'Ergonomic task chairs & workspace ergonomics',
+    description:
+      'Pioneering PostureFit SL sacral support, harmonic tilt, and breathable 8Z Pellicle elastomeric suspension for full-day posture.',
+    subcategories: [
+      { name: 'All Home & Living', slug: 'home' },
+      { name: 'Kitchen Appliances', slug: 'kitchen' },
+      { name: 'Office & Furniture', slug: 'office' },
+    ],
+    brands: ['Herman Miller'],
+  },
+  electronics: {
+    title: 'Consumer Electronics & Computing',
+    department: 'Consumer Electronics',
+    tagline: 'Flagship M3 Max workstations, spatial audio & telemetry smartwatches',
+    description:
+      'Explore the apex of personal technology—from Apple silicon M3 Max workstations and Dell XPS powerhouses to Sony active noise-cancellation audio.',
+    subcategories: [
+      { name: 'All Electronics', slug: 'electronics' },
+      { name: 'Audio & Headphones', slug: 'audio' },
+      { name: 'Computers & Laptops', slug: 'computers' },
+      { name: 'Wearables & Smartwatches', slug: 'wearables' },
+    ],
+    brands: ['Apple', 'Sony', 'Dell', 'Bose'],
+  },
+  audio: {
+    title: 'Audio & Headphones',
+    department: 'Consumer Electronics',
+    tagline: 'Industry-leading noise cancellation and 360° acoustic fidelity',
+    description:
+      'Immerse yourself with Dual Noise Sensor technology, LDAC high-res streaming, and omnidirectional acoustic architecture.',
+    subcategories: [
+      { name: 'All Electronics', slug: 'electronics' },
+      { name: 'Audio & Headphones', slug: 'audio' },
+      { name: 'Computers & Laptops', slug: 'computers' },
+      { name: 'Wearables & Smartwatches', slug: 'wearables' },
+    ],
+    brands: ['Sony', 'Bose'],
+  },
+  computers: {
+    title: 'Computers & Workstations',
+    department: 'Consumer Electronics',
+    tagline: 'Pro workstations engineered for demanding creative & engineering workflows',
+    description:
+      'Apple silicon M3 Max hardware-accelerated ray tracing and Dell 3.5K OLED InfinityEdge mobile studios.',
+    subcategories: [
+      { name: 'All Electronics', slug: 'electronics' },
+      { name: 'Audio & Headphones', slug: 'audio' },
+      { name: 'Computers & Laptops', slug: 'computers' },
+      { name: 'Wearables & Smartwatches', slug: 'wearables' },
+    ],
+    brands: ['Apple', 'Dell'],
+  },
+  wearables: {
+    title: 'Wearables & Telemetry',
+    department: 'Consumer Electronics',
+    tagline: 'Aerospace-grade titanium, precision GPS & biometrics',
+    description:
+      'Military-standard rugged smartwatches with cellular connectivity and multi-day expedition battery life.',
+    subcategories: [
+      { name: 'All Electronics', slug: 'electronics' },
+      { name: 'Audio & Headphones', slug: 'audio' },
+      { name: 'Computers & Laptops', slug: 'computers' },
+      { name: 'Wearables & Smartwatches', slug: 'wearables' },
+    ],
+    brands: ['Apple'],
+  },
+  apparel: {
+    title: 'Technical Apparel & Outerwear',
+    department: 'Performance & Outerwear',
+    tagline: 'Engineered thermal insulation, technical fleece & responsive footwear',
+    description:
+      'Garments crafted with zoned thermoregulation, 100% recycled insulation, and max-cushion lifestyle silhouettes.',
+    subcategories: [
+      { name: 'All Apparel', slug: 'apparel' },
+      { name: 'Footwear & Sneakers', slug: 'footwear' },
+      { name: "Men's Technical Outerwear", slug: 'mens-wear' },
+      { name: "Women's Activewear", slug: 'womens-wear' },
+    ],
+    brands: ['Nike', 'Patagonia', 'Lululemon'],
+  },
+  footwear: {
+    title: 'Footwear & Sneakers',
+    department: 'Technical Apparel',
+    tagline: 'High-volume Air units, dual-density foam & street-ready silhouettes',
+    description:
+      'Engineered mesh breathability and resilient rubber traction outsoles for daily commute and training.',
+    subcategories: [
+      { name: 'All Apparel', slug: 'apparel' },
+      { name: 'Footwear & Sneakers', slug: 'footwear' },
+      { name: "Men's Technical Outerwear", slug: 'mens-wear' },
+      { name: "Women's Activewear", slug: 'womens-wear' },
+    ],
+    brands: ['Nike'],
+  },
+  'mens-wear': {
+    title: "Men's Technical Outerwear",
+    department: 'Technical Apparel',
+    tagline: 'Lightweight warmth, clean tailored lines & weather-resistant shells',
+    description:
+      'Double-sided smooth fleece and ultra-lightweight water-resistant ripstop insulation.',
+    subcategories: [
+      { name: 'All Apparel', slug: 'apparel' },
+      { name: 'Footwear & Sneakers', slug: 'footwear' },
+      { name: "Men's Technical Outerwear", slug: 'mens-wear' },
+      { name: "Women's Activewear", slug: 'womens-wear' },
+    ],
+    brands: ['Nike', 'Patagonia'],
+  },
+  'womens-wear': {
+    title: "Women's Activewear",
+    department: 'Technical Apparel',
+    tagline: 'Weightless Nulu fabric and buttery-soft four-way stretch',
+    description:
+      'Engineered for unrestricted yoga and training mobility with sweat-wicking breathability.',
+    subcategories: [
+      { name: 'All Apparel', slug: 'apparel' },
+      { name: 'Footwear & Sneakers', slug: 'footwear' },
+      { name: "Men's Technical Outerwear", slug: 'mens-wear' },
+      { name: "Women's Activewear", slug: 'womens-wear' },
+    ],
+    brands: ['Lululemon'],
+  },
+};
 
 function StoreContent() {
   const router = useRouter();
@@ -49,6 +216,9 @@ function StoreContent() {
     { id: 'cat_home', name: 'Home & Living', slug: 'home' },
   ];
   const displayCategories = categories.length > 0 ? categories : defaultCategories;
+
+  // Active category meta for header banner
+  const activeCategoryMeta = category ? categoryMetaMap[category.toLowerCase()] : null;
 
   // Fetch Products with reactive parameters
   const { data: productsData, isLoading } = useQuery({
@@ -90,7 +260,8 @@ function StoreContent() {
     setTimeout(() => setNewsletterSuccess(false), 5000);
   };
 
-  const brands = ['Apple', 'Sony', 'Nike', 'Dell', 'Breville', 'Herman Miller', 'Bose', 'Patagonia'];
+  const allBrands = ['Apple', 'Sony', 'Nike', 'Dell', 'Breville', 'Herman Miller', 'Bose', 'Patagonia'];
+  const displayBrands = activeCategoryMeta?.brands || allBrands;
 
   const categoryCards = [
     {
@@ -123,166 +294,286 @@ function StoreContent() {
   ];
 
   return (
-    <div className="space-y-16 pb-20 bg-slate-50 min-h-screen text-slate-900">
-      {/* 1. HERO SECTION */}
-      <section className="relative overflow-hidden bg-slate-950 text-white">
-        {/* Subtle decorative glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-indigo-600/30 blur-[150px] rounded-full pointer-events-none" />
+    <div className="space-y-14 pb-20 bg-slate-50 min-h-screen text-slate-900">
+      {/* 1. CONDITIONAL TOP BANNER */}
+      {/* CASE A: Active Category Banner */}
+      {category && (
+        <section className="relative overflow-hidden bg-slate-900 text-white border-b border-slate-800">
+          <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[280px] bg-indigo-600/25 blur-[130px] rounded-full pointer-events-none" />
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28">
-          <div className="text-center space-y-6 max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-4 py-1.5 text-xs font-semibold text-indigo-300">
-              <Sparkles className="h-4 w-4 text-indigo-400" />
-              <span>Modular Monolith • High-Concurrency Architecture</span>
-            </div>
-
-            <h1 className="text-4xl font-black tracking-tight sm:text-6xl lg:text-7xl leading-tight">
-              Next-Gen Commerce. <br />
-              <span className="bg-gradient-to-r from-indigo-400 via-purple-300 to-indigo-200 bg-clip-text text-transparent">
-                Engineered for Scale.
+          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+            {/* Breadcrumb Navigation */}
+            <div className="flex items-center gap-2 text-xs text-slate-400 mb-4">
+              <Link href="/" className="hover:text-white transition-colors">
+                Storefront
+              </Link>
+              <span>/</span>
+              <span className="text-slate-400">Departments</span>
+              <span>/</span>
+              <span className="text-indigo-400 font-semibold capitalize">
+                {activeCategoryMeta?.title || category}
               </span>
-            </h1>
-
-            <p className="mx-auto max-w-2xl text-base sm:text-lg text-slate-300 font-normal leading-relaxed">
-              Explore curated flagship electronics, technical outerwear, and modern ergonomic workspaces. Built with zero overselling, zero-trust server-side pricing, and instant &lt;1ms Trie search.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  const el = document.getElementById('catalog-section');
-                  el?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="rounded-xl bg-indigo-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition-all cursor-pointer"
-              >
-                Shop All Collections
-              </button>
-              <button
-                type="button"
-                onClick={() => updateQuery({ category: 'electronics' })}
-                className="rounded-xl border border-slate-700 bg-slate-800/80 px-6 py-3.5 text-sm font-semibold text-white hover:bg-slate-700 transition-all cursor-pointer"
-              >
-                Browse Electronics Deals
-              </button>
             </div>
 
-            {/* 4 Feature Trust Badges */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-10 border-t border-slate-800 text-xs text-slate-300 text-left">
-              <div className="flex items-center gap-3 bg-slate-900/80 rounded-xl p-3.5 border border-slate-800">
-                <Truck className="h-5 w-5 text-indigo-400 shrink-0" />
-                <div>
-                  <p className="font-bold text-white">Free Express Shipping</p>
-                  <p className="text-[11px] text-slate-400">On all orders over $100</p>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div className="space-y-3 max-w-2xl">
+                <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-3.5 py-1 text-xs font-semibold text-indigo-300">
+                  <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
+                  <span>{activeCategoryMeta?.department || 'Curated Department'}</span>
                 </div>
+
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
+                  {activeCategoryMeta?.title || `${category} Collection`}
+                </h1>
+
+                <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
+                  {activeCategoryMeta?.description ||
+                    'Explore our verified inventory with zero-overselling atomic inventory protection and instant checkout.'}
+                </p>
+
+                {/* Subcategory Filter Pills directly in the banner */}
+                {activeCategoryMeta?.subcategories && activeCategoryMeta.subcategories.length > 0 && (
+                  <div className="pt-2 flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-bold text-slate-400 mr-1">Subcategories:</span>
+                    {activeCategoryMeta.subcategories.map((sub) => {
+                      const isSubActive = category.toLowerCase() === sub.slug.toLowerCase();
+                      return (
+                        <button
+                          key={sub.slug}
+                          type="button"
+                          onClick={() => updateQuery({ category: sub.slug })}
+                          className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
+                            isSubActive
+                              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 ring-2 ring-indigo-400'
+                              : 'bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                          }`}
+                        >
+                          {sub.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
-              <div className="flex items-center gap-3 bg-slate-900/80 rounded-xl p-3.5 border border-slate-800">
-                <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0" />
-                <div>
-                  <p className="font-bold text-white">Atomic Stock Guard</p>
-                  <p className="text-[11px] text-slate-400">Zero overselling protection</p>
+              {/* Live inventory badge / Reset CTA */}
+              <div className="flex flex-col sm:flex-row md:flex-col items-start md:items-end gap-3 shrink-0">
+                <div className="rounded-xl border border-slate-700/80 bg-slate-800/80 p-3.5 text-xs text-slate-300 space-y-1">
+                  <div className="flex items-center gap-2 font-bold text-white">
+                    <ShieldCheck className="h-4 w-4 text-emerald-400" />
+                    <span>Verified Live Warehouse Stock</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">
+                    Showing {products.length} {products.length === 1 ? 'item' : 'items'} in this department
+                  </p>
                 </div>
-              </div>
 
-              <div className="flex items-center gap-3 bg-slate-900/80 rounded-xl p-3.5 border border-slate-800">
-                <Zap className="h-5 w-5 text-amber-400 shrink-0" />
-                <div>
-                  <p className="font-bold text-white">Instant &lt;1ms Search</p>
-                  <p className="text-[11px] text-slate-400">In-memory Radix Trie</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 bg-slate-900/80 rounded-xl p-3.5 border border-slate-800">
-                <RotateCcw className="h-5 w-5 text-purple-400 shrink-0" />
-                <div>
-                  <p className="font-bold text-white">30-Day Guarantee</p>
-                  <p className="text-[11px] text-slate-400">Hassle-free verified returns</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. CURATED CATEGORY TILES (Visual Collection Cards) */}
-      {!search && (
-        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
-          <div className="flex items-end justify-between">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-indigo-600">
-                Curated Departments
-              </p>
-              <h2 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl mt-1">
-                Explore by Category
-              </h2>
-            </div>
-            <span className="text-xs font-medium text-slate-500 hidden sm:inline">
-              12 Verified Products across 11 Taxonomy Nodes
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {categoryCards.map((card) => {
-              const isSelected = category === card.slug;
-              return (
-                <div
-                  key={card.slug}
-                  onClick={() => updateQuery({ category: isSelected ? null : card.slug })}
-                  className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 cursor-pointer shadow-sm hover:shadow-xl ${
-                    isSelected
-                      ? 'border-indigo-600 ring-4 ring-indigo-600/20'
-                      : 'border-slate-200 hover:border-indigo-400'
-                  }`}
+                <button
+                  type="button"
+                  onClick={handleClearFilters}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer"
                 >
-                  {/* Background Image */}
-                  <div className="relative h-64 w-full overflow-hidden bg-slate-100">
-                    <Image
-                      src={card.image}
-                      alt={card.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/50 to-transparent" />
-                  </div>
-
-                  {/* Card Content Overlay */}
-                  <div className="absolute inset-0 p-6 flex flex-col justify-between text-white">
-                    <div className="flex justify-between items-start">
-                      <span className="rounded-full bg-white/20 backdrop-blur-md px-3 py-1 text-[11px] font-semibold tracking-wide">
-                        {card.itemCount}
-                      </span>
-                      <span className="rounded-full bg-indigo-600 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
-                        {card.highlight}
-                      </span>
-                    </div>
-
-                    <div className="space-y-1">
-                      <p className="text-xs font-semibold text-indigo-300 uppercase tracking-wider">
-                        {card.subtitle}
-                      </p>
-                      <h3 className="text-xl font-bold text-white group-hover:text-indigo-200 transition-colors">
-                        {card.title}
-                      </h3>
-                      <p className="text-xs text-slate-300 line-clamp-2 pt-1 font-normal">
-                        {card.description}
-                      </p>
-                      <div className="pt-3 flex items-center gap-1.5 text-xs font-bold text-indigo-300 group-hover:translate-x-1 transition-transform">
-                        <span>{isSelected ? '✓ Filter Active' : 'View Collection'}</span>
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  <span>Reset to All Departments</span>
+                </button>
+              </div>
+            </div>
           </div>
         </section>
       )}
 
-      {/* 3. MAIN CATALOG SECTION WITH FILTERS & SORTING */}
+      {/* CASE B: Active Search Banner */}
+      {!category && search && (
+        <section className="relative overflow-hidden bg-slate-900 text-white border-b border-slate-800">
+          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-3 py-1 text-xs font-semibold text-indigo-300">
+                  <Search className="h-3.5 w-3.5 text-indigo-400" />
+                  <span>Trie Autocomplete Search</span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-black text-white">
+                  Search results for &ldquo;<span className="text-indigo-400">{search}</span>&rdquo;
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-400">
+                  Found {products.length} matching {products.length === 1 ? 'product' : 'products'} in our in-memory catalog index.
+                </p>
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => updateQuery({ search: null })}
+                className="self-start sm:self-auto border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700"
+              >
+                Clear Search
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* CASE C: Default Homepage Hero (When neither category nor search is active) */}
+      {!category && !search && (
+        <>
+          <section className="relative overflow-hidden bg-slate-950 text-white">
+            {/* Subtle decorative glow */}
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-indigo-600/30 blur-[150px] rounded-full pointer-events-none" />
+
+            <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28">
+              <div className="text-center space-y-6 max-w-4xl mx-auto">
+                <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-4 py-1.5 text-xs font-semibold text-indigo-300">
+                  <Sparkles className="h-4 w-4 text-indigo-400" />
+                  <span>Modular Monolith • High-Concurrency Architecture</span>
+                </div>
+
+                <h1 className="text-4xl font-black tracking-tight sm:text-6xl lg:text-7xl leading-tight">
+                  Next-Gen Commerce. <br />
+                  <span className="bg-gradient-to-r from-indigo-400 via-purple-300 to-indigo-200 bg-clip-text text-transparent">
+                    Engineered for Scale.
+                  </span>
+                </h1>
+
+                <p className="mx-auto max-w-2xl text-base sm:text-lg text-slate-300 font-normal leading-relaxed">
+                  Explore curated flagship electronics, technical outerwear, and modern ergonomic workspaces. Built with zero overselling, zero-trust server-side pricing, and instant &lt;1ms Trie search.
+                </p>
+
+                {/* CTA Buttons */}
+                <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const el = document.getElementById('catalog-section');
+                      el?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="rounded-xl bg-indigo-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition-all cursor-pointer"
+                  >
+                    Shop All Collections
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => updateQuery({ category: 'electronics' })}
+                    className="rounded-xl border border-slate-700 bg-slate-800/80 px-6 py-3.5 text-sm font-semibold text-white hover:bg-slate-700 transition-all cursor-pointer"
+                  >
+                    Browse Electronics Deals
+                  </button>
+                </div>
+
+                {/* 4 Feature Trust Badges */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-10 border-t border-slate-800 text-xs text-slate-300 text-left">
+                  <div className="flex items-center gap-3 bg-slate-900/80 rounded-xl p-3.5 border border-slate-800">
+                    <Truck className="h-5 w-5 text-indigo-400 shrink-0" />
+                    <div>
+                      <p className="font-bold text-white">Free Express Shipping</p>
+                      <p className="text-[11px] text-slate-400">On all orders over $100</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 bg-slate-900/80 rounded-xl p-3.5 border border-slate-800">
+                    <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0" />
+                    <div>
+                      <p className="font-bold text-white">Atomic Stock Guard</p>
+                      <p className="text-[11px] text-slate-400">Zero overselling protection</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 bg-slate-900/80 rounded-xl p-3.5 border border-slate-800">
+                    <Zap className="h-5 w-5 text-amber-400 shrink-0" />
+                    <div>
+                      <p className="font-bold text-white">Instant &lt;1ms Search</p>
+                      <p className="text-[11px] text-slate-400">In-memory Radix Trie</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 bg-slate-900/80 rounded-xl p-3.5 border border-slate-800">
+                    <RotateCcw className="h-5 w-5 text-purple-400 shrink-0" />
+                    <div>
+                      <p className="font-bold text-white">30-Day Guarantee</p>
+                      <p className="text-[11px] text-slate-400">Hassle-free verified returns</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* CURATED CATEGORY TILES (Visual Collection Cards) */}
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
+            <div className="flex items-end justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-indigo-600">
+                  Curated Departments
+                </p>
+                <h2 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl mt-1">
+                  Explore by Category
+                </h2>
+              </div>
+              <span className="text-xs font-medium text-slate-500 hidden sm:inline">
+                12 Verified Products across 11 Taxonomy Nodes
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {categoryCards.map((card) => {
+                const isSelected = category === card.slug;
+                return (
+                  <div
+                    key={card.slug}
+                    onClick={() => updateQuery({ category: isSelected ? null : card.slug })}
+                    className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 cursor-pointer shadow-sm hover:shadow-xl ${
+                      isSelected
+                        ? 'border-indigo-600 ring-4 ring-indigo-600/20'
+                        : 'border-slate-200 hover:border-indigo-400'
+                    }`}
+                  >
+                    {/* Background Image */}
+                    <div className="relative h-64 w-full overflow-hidden bg-slate-100">
+                      <Image
+                        src={card.image}
+                        alt={card.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/50 to-transparent" />
+                    </div>
+
+                    {/* Card Content Overlay */}
+                    <div className="absolute inset-0 p-6 flex flex-col justify-between text-white">
+                      <div className="flex justify-between items-start">
+                        <span className="rounded-full bg-white/20 backdrop-blur-md px-3 py-1 text-[11px] font-semibold tracking-wide">
+                          {card.itemCount}
+                        </span>
+                        <span className="rounded-full bg-indigo-600 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                          {card.highlight}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1">
+                        <p className="text-xs font-semibold text-indigo-300 uppercase tracking-wider">
+                          {card.subtitle}
+                        </p>
+                        <h3 className="text-xl font-bold text-white group-hover:text-indigo-200 transition-colors">
+                          {card.title}
+                        </h3>
+                        <p className="text-xs text-slate-300 line-clamp-2 pt-1 font-normal">
+                          {card.description}
+                        </p>
+                        <div className="pt-3 flex items-center gap-1.5 text-xs font-bold text-indigo-300 group-hover:translate-x-1 transition-transform">
+                          <span>{isSelected ? '✓ Filter Active' : 'View Collection'}</span>
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* 2. MAIN CATALOG SECTION WITH FILTERS & SORTING */}
       <section id="catalog-section" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Title & Filter Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
@@ -292,6 +583,8 @@ function StoreContent() {
                 <span>
                   Search results for &ldquo;<span className="text-indigo-600">{search}</span>&rdquo;
                 </span>
+              ) : activeCategoryMeta ? (
+                <span>{activeCategoryMeta.title}</span>
               ) : category ? (
                 <span className="capitalize">{category} Collection</span>
               ) : (
@@ -338,11 +631,11 @@ function StoreContent() {
                     : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
                 }`}
               >
-                All Collections ({category || brand || search ? products.length : 12})
+                All Departments ({category || brand || search ? products.length : 12})
               </button>
 
               {displayCategories.map((cat) => {
-                const isSelected = category === cat.slug;
+                const isSelected = category.toLowerCase() === cat.slug.toLowerCase();
                 return (
                   <button
                     key={cat.id}
@@ -350,7 +643,7 @@ function StoreContent() {
                     onClick={() => updateQuery({ category: isSelected ? null : cat.slug })}
                     className={`rounded-full px-4 py-2 text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
                       isSelected
-                        ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-200'
+                        ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-200 font-bold'
                         : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
                     }`}
                   >
@@ -364,10 +657,10 @@ function StoreContent() {
           {/* Quick Brand Filter Pills */}
           <div className="pt-2 border-t border-slate-100">
             <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
-              Filter by Brand:
+              Filter by Brand {activeCategoryMeta ? `in ${activeCategoryMeta.department}` : ''}:
             </span>
             <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs">
-              {brands.map((b) => {
+              {displayBrands.map((b) => {
                 const isBrandSelected = brand.toLowerCase() === b.toLowerCase();
                 return (
                   <button
@@ -393,7 +686,7 @@ function StoreContent() {
               <span className="text-xs text-slate-500 font-medium">Active filters:</span>
               {category && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 border border-indigo-200">
-                  Category: <span className="capitalize">{category}</span>
+                  Category: <span className="capitalize">{activeCategoryMeta?.title || category}</span>
                   <button
                     type="button"
                     onClick={() => updateQuery({ category: null })}
@@ -456,7 +749,7 @@ function StoreContent() {
         />
       </section>
 
-      {/* 4. SYSTEM DESIGN ARCHITECTURE SHOWCASE */}
+      {/* 3. SYSTEM DESIGN ARCHITECTURE SHOWCASE */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white p-8 sm:p-12 lg:p-16 shadow-xl">
           <div className="max-w-2xl space-y-4 mb-10">
@@ -506,7 +799,7 @@ function StoreContent() {
         </div>
       </section>
 
-      {/* 5. VERIFIED CUSTOMER TESTIMONIALS */}
+      {/* 4. VERIFIED CUSTOMER TESTIMONIALS */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center space-y-2 max-w-xl mx-auto">
           <p className="text-xs font-bold uppercase tracking-wider text-indigo-600">
@@ -577,7 +870,7 @@ function StoreContent() {
         </div>
       </section>
 
-      {/* 6. VIP NEWSLETTER CLUB */}
+      {/* 5. VIP NEWSLETTER CLUB */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="rounded-2xl bg-indigo-50 border border-indigo-200 p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-xs">
           <div className="space-y-2 max-w-md">
