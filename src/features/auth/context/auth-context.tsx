@@ -11,7 +11,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (credentials: LoginFormData) => Promise<void>;
+  login: (credentials: LoginFormData) => Promise<User>;
   register: (data: Omit<RegisterFormData, 'confirmPassword'>) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -69,12 +69,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [triggerCartMerge]);
 
-  const login = async (credentials: LoginFormData) => {
+  const login = async (credentials: LoginFormData): Promise<User> => {
     setIsLoading(true);
     try {
       const data = await authApi.login(credentials);
       setUser(data.user);
       await triggerCartMerge();
+      return data.user;
     } finally {
       setIsLoading(false);
     }

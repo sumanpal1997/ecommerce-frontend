@@ -30,8 +30,16 @@ export function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       setServerError(null);
-      await login(data);
-      router.push('/');
+      const user = await login(data);
+      if (user.role === 'ADMIN') {
+        router.push('/admin');
+      } else {
+        const redirect =
+          typeof window !== 'undefined'
+            ? new URLSearchParams(window.location.search).get('redirect')
+            : null;
+        router.push(redirect || '/');
+      }
     } catch (err: unknown) {
       if (err instanceof Error) {
         setServerError(err.message);

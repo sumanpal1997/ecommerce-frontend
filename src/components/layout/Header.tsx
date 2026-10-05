@@ -26,6 +26,8 @@ import {
   Package,
   CreditCard,
   Truck,
+  Boxes,
+  LayoutDashboard,
 } from 'lucide-react';
 import { useAuth } from '@/features/auth/context/auth-context';
 import { useCart } from '@/features/cart/context/cart-context';
@@ -621,23 +623,48 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md">
-      {/* Top Promotional Bar */}
-      <div className="bg-slate-900 px-4 py-2 text-center text-xs text-slate-300 font-medium tracking-wide">
+      {/* Top Promotional Bar / Admin Mode Notice */}
+      <div
+        className={`${
+          user?.role === 'ADMIN' ? 'bg-indigo-950 border-b border-indigo-900/80' : 'bg-slate-900'
+        } px-4 py-2 text-center text-xs text-slate-300 font-medium tracking-wide transition-colors`}
+      >
         <div className="mx-auto max-w-7xl flex items-center justify-between">
-          <span className="hidden md:inline-flex items-center gap-1.5 text-indigo-400">
-            <Truck className="h-3.5 w-3.5" />
-            <span>Complimentary 2-Day Shipping Over $100</span>
-          </span>
-          <p className="mx-auto md:mx-0">
-            <strong>Spring Collection Sale</strong> • Use code{' '}
-            <span className="bg-indigo-600/40 text-indigo-300 px-1.5 py-0.5 rounded font-mono font-bold">
-              SHOPFLOW10
-            </span>{' '}
-            for 10% off your first order
-          </p>
-          <span className="hidden lg:inline text-slate-400">
-            100% Certified Authentic • 30-Day Returns
-          </span>
+          {user?.role === 'ADMIN' ? (
+            <>
+              <span className="inline-flex items-center gap-1.5 text-indigo-400 font-bold">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                <span>Store Operator Session</span>
+              </span>
+              <p className="mx-auto md:mx-0 text-indigo-200">
+                You are currently viewing the storefront in Administrator Preview mode.
+              </p>
+              <Link
+                href="/admin"
+                className="hidden sm:inline-flex items-center gap-1 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 px-3 py-1 rounded-full transition-colors shadow-xs"
+              >
+                <span>Open Admin Console</span>
+                <ArrowRight className="h-3 w-3" />
+              </Link>
+            </>
+          ) : (
+            <>
+              <span className="hidden md:inline-flex items-center gap-1.5 text-indigo-400">
+                <Truck className="h-3.5 w-3.5" />
+                <span>Complimentary 2-Day Shipping Over $100</span>
+              </span>
+              <p className="mx-auto md:mx-0">
+                <strong>Spring Collection Sale</strong> • Use code{' '}
+                <span className="bg-indigo-600/40 text-indigo-300 px-1.5 py-0.5 rounded font-mono font-bold">
+                  SHOPFLOW10
+                </span>{' '}
+                for 10% off your first order
+              </p>
+              <span className="hidden lg:inline text-slate-400">
+                100% Certified Authentic • 30-Day Returns
+              </span>
+            </>
+          )}
         </div>
       </div>
 
@@ -671,6 +698,15 @@ export function Header() {
 
         {/* Right Actions: Auth & Cart */}
         <div className="flex items-center gap-3 shrink-0">
+          {isAuthenticated && user?.role === 'ADMIN' && (
+            <Link href="/admin">
+              <Button size="sm" className="hidden sm:inline-flex items-center gap-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 shadow-xs font-bold">
+                <LayoutDashboard className="h-3.5 w-3.5" />
+                <span>Admin Portal</span>
+              </Button>
+            </Link>
+          )}
+
           {isAuthenticated && user ? (
             <div className="relative">
               {(() => {
@@ -713,23 +749,56 @@ export function Header() {
                           </span>
                         </div>
 
-                        <Link
-                          href="/orders"
-                          onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
-                        >
-                          <Package className="h-3.5 w-3.5 text-indigo-600" />
-                          <span>My Orders &amp; Receipts</span>
-                        </Link>
+                        {user.role === 'ADMIN' ? (
+                          <>
+                            <Link
+                              href="/admin"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-indigo-600 bg-indigo-50/50 hover:bg-indigo-50 transition-colors"
+                            >
+                              <LayoutDashboard className="h-3.5 w-3.5 text-indigo-600" />
+                              <span>Admin Dashboard &amp; KPIs</span>
+                            </Link>
 
-                        <Link
-                          href="/checkout"
-                          onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
-                        >
-                          <CreditCard className="h-3.5 w-3.5 text-slate-400" />
-                          <span>Direct Checkout</span>
-                        </Link>
+                            <Link
+                              href="/admin/orders"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
+                            >
+                              <ShoppingBag className="h-3.5 w-3.5 text-slate-500" />
+                              <span>Manage All Orders</span>
+                            </Link>
+
+                            <Link
+                              href="/admin/inventory"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
+                            >
+                              <Boxes className="h-3.5 w-3.5 text-slate-500" />
+                              <span>Warehouse &amp; Stock</span>
+                            </Link>
+                          </>
+                        ) : (
+                          <>
+                            <Link
+                              href="/orders"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
+                            >
+                              <Package className="h-3.5 w-3.5 text-indigo-600" />
+                              <span>My Orders &amp; Receipts</span>
+                            </Link>
+
+                            <Link
+                              href="/checkout"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
+                            >
+                              <CreditCard className="h-3.5 w-3.5 text-slate-400" />
+                              <span>Direct Checkout</span>
+                            </Link>
+                          </>
+                        )}
 
                         <button
                           type="button"

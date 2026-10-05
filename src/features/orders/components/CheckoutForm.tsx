@@ -26,7 +26,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 export function CheckoutForm() {
   const { cart, isLoading: isCartLoading } = useCart();
-  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const { isAuthenticated, isLoading: isAuthLoading, user } = useAuth();
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -137,8 +137,29 @@ export function CheckoutForm() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-8">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
+      {user?.role === 'ADMIN' && (
+        <div className="rounded-2xl border border-indigo-200 bg-indigo-50/80 p-4 text-xs text-indigo-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shrink-0">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="font-bold text-sm text-indigo-950">Administrator Session Detected</p>
+              <p className="text-slate-600 text-xs">
+                As a store operator, you manage orders, track revenue, and restock warehouse inventory in the Admin Console.
+              </p>
+            </div>
+          </div>
+          <Link href="/admin">
+            <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-xs shrink-0 font-bold whitespace-nowrap">
+              Open Admin Console →
+            </Button>
+          </Link>
+        </div>
+      )}
+
+      <div className="mb-2">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
           Checkout
         </h1>
