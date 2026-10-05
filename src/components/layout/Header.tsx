@@ -620,6 +620,7 @@ export function Header() {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   const itemCount = cart?.itemCount || 0;
+  const isAdmin = user?.role === 'ADMIN';
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md">
@@ -832,20 +833,31 @@ export function Header() {
             </div>
           )}
 
-          {/* Cart Icon Trigger */}
-          <button
-            type="button"
-            onClick={openCart}
-            className="relative flex items-center justify-center rounded-xl border border-slate-200 bg-white p-2.5 text-slate-700 hover:border-indigo-600 hover:text-indigo-600 transition-colors shadow-2xs group cursor-pointer"
-            aria-label={`Open shopping cart with ${itemCount} items`}
-          >
-            <ShoppingBag className="h-5 w-5 group-hover:scale-110 transition-transform" />
-            {itemCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[11px] font-bold text-white shadow-xs animate-scaleIn">
-                {itemCount > 99 ? '99+' : itemCount}
-              </span>
-            )}
-          </button>
+          {/* Cart Icon Trigger - Customers & Guests ONLY */}
+          {!isAdmin ? (
+            <button
+              type="button"
+              onClick={openCart}
+              className="relative flex items-center justify-center rounded-xl border border-slate-200 bg-white p-2.5 text-slate-700 hover:border-indigo-600 hover:text-indigo-600 transition-colors shadow-2xs group cursor-pointer"
+              aria-label={`Open shopping cart with ${itemCount} items`}
+            >
+              <ShoppingBag className="h-5 w-5 group-hover:scale-110 transition-transform" />
+              {itemCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[11px] font-bold text-white shadow-xs animate-scaleIn">
+                  {itemCount > 99 ? '99+' : itemCount}
+                </span>
+              )}
+            </button>
+          ) : (
+            <Link
+              href="/admin/inventory"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-50/70 px-3 py-2 text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition-colors"
+              title="Administrator mode active — shopping cart disabled"
+            >
+              <Boxes className="h-4 w-4 text-indigo-600" />
+              <span>Stock Control</span>
+            </Link>
+          )}
 
           {/* Mobile Menu Toggle */}
           <button
@@ -870,17 +882,31 @@ export function Header() {
 
           {isAuthenticated ? (
             <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
-              <Link
-                href="/orders"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between px-3 py-2 rounded-xl bg-indigo-50 text-indigo-700 text-xs font-bold"
-              >
-                <div className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
-                  <span>My Orders &amp; Receipts</span>
-                </div>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
+              {isAdmin ? (
+                <Link
+                  href="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2 rounded-xl bg-indigo-50 text-indigo-700 text-xs font-bold"
+                >
+                  <div className="flex items-center gap-2">
+                    <LayoutDashboard className="h-4 w-4" />
+                    <span>Admin Dashboard &amp; Console</span>
+                  </div>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              ) : (
+                <Link
+                  href="/orders"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2 rounded-xl bg-indigo-50 text-indigo-700 text-xs font-bold"
+                >
+                  <div className="flex items-center gap-2">
+                    <Package className="h-4 w-4" />
+                    <span>My Orders &amp; Receipts</span>
+                  </div>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              )}
             </div>
           ) : (
             <div className="pt-3 border-t border-slate-100 flex gap-2">

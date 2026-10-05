@@ -3,9 +3,10 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ShoppingCart, Check } from 'lucide-react';
+import { Star, ShoppingCart, Check, Eye } from 'lucide-react';
 import { Product } from '../types/product.types';
 import { useCart } from '@/features/cart/context/cart-context';
+import { useAuth } from '@/features/auth/context/auth-context';
 import { formatCurrency } from '@/lib/utils/cn';
 import { Badge } from '@/components/ui/Badge';
 import { Spinner } from '@/components/ui/Spinner';
@@ -15,6 +16,8 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'ADMIN';
   const { addToCart } = useCart();
   const [isAdding, setIsAdding] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
@@ -126,26 +129,37 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            disabled={isAdding || product.status !== 'ACTIVE'}
-            className={`inline-flex items-center justify-center rounded-lg p-2 transition-all ${
-              isAdded
-                ? 'bg-emerald-600 text-white'
-                : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white'
-            } disabled:opacity-50 disabled:pointer-events-none`}
-            title="Add to cart"
-            aria-label={`Add ${product.title} to shopping cart`}
-          >
-            {isAdding ? (
-              <Spinner size="sm" />
-            ) : isAdded ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <ShoppingCart className="h-4 w-4" />
-            )}
-          </button>
+          {!isAdmin ? (
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={isAdding || product.status !== 'ACTIVE'}
+              className={`inline-flex items-center justify-center rounded-lg p-2 transition-all ${
+                isAdded
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white'
+              } disabled:opacity-50 disabled:pointer-events-none`}
+              title="Add to cart"
+              aria-label={`Add ${product.title} to shopping cart`}
+            >
+              {isAdding ? (
+                <Spinner size="sm" />
+              ) : isAdded ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <ShoppingCart className="h-4 w-4" />
+              )}
+            </button>
+          ) : (
+            <Link
+              href={`/products/${product.slug}`}
+              className="inline-flex items-center gap-1 rounded-lg bg-slate-100 hover:bg-indigo-50 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:text-indigo-600 transition-colors"
+              title="Inspect product specification"
+            >
+              <Eye className="h-3.5 w-3.5" />
+              <span>Inspect</span>
+            </Link>
+          )}
         </div>
       </div>
     </div>

@@ -5,12 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { X, ShoppingBag, ArrowRight, AlertCircle, Sparkles } from 'lucide-react';
 import { useCart } from '../context/cart-context';
+import { useAuth } from '@/features/auth/context/auth-context';
 import { CartItem } from './CartItem';
 import { Button } from '@/components/ui/Button';
 import { formatCurrency } from '@/lib/utils/cn';
 
 export function CartDrawer() {
   const { cart, isLoading, isOpen, closeCart, updateQuantity, removeFromCart } = useCart();
+  const { user } = useAuth();
   const router = useRouter();
 
   // Close on ESC key
@@ -36,7 +38,7 @@ export function CartDrawer() {
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || user?.role === 'ADMIN') return null;
 
   const subtotal = cart?.subtotal || 0;
   const freeShippingThreshold = 100;

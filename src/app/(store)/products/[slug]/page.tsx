@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { productApi } from '@/features/products/services/product.api';
 import { useCart } from '@/features/cart/context/cart-context';
+import { useAuth } from '@/features/auth/context/auth-context';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { formatCurrency } from '@/lib/utils/cn';
@@ -28,6 +29,8 @@ export default function ProductDetailPage() {
   const router = useRouter();
   const slug = params.slug as string;
   const { addToCart } = useCart();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'ADMIN';
 
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -260,55 +263,81 @@ export default function ProductDetailPage() {
 
           {/* Quantity Selector & Add to Cart */}
           <div className="space-y-4 pt-2">
-            <div className="flex items-center gap-4">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-700">
-                Quantity:
-              </span>
-              <div className="flex items-center border border-slate-300 rounded-lg bg-white">
-                <button
-                  type="button"
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  disabled={quantity <= 1}
-                  className="p-2 text-slate-600 hover:bg-slate-50 disabled:opacity-40 transition-colors"
-                  aria-label="Decrease quantity"
-                >
-                  <Minus className="h-4 w-4" />
-                </button>
-                <span className="w-10 text-center text-sm font-bold text-slate-800">
-                  {quantity}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setQuantity((q) => q + 1)}
-                  className="p-2 text-slate-600 hover:bg-slate-50 transition-colors"
-                  aria-label="Increase quantity"
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
+            {!isAdmin ? (
+              <>
+                <div className="flex items-center gap-4">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-slate-700">
+                    Quantity:
+                  </span>
+                  <div className="flex items-center border border-slate-300 rounded-lg bg-white">
+                    <button
+                      type="button"
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      disabled={quantity <= 1}
+                      className="p-2 text-slate-600 hover:bg-slate-50 disabled:opacity-40 transition-colors"
+                      aria-label="Decrease quantity"
+                    >
+                      <Minus className="h-4 w-4" />
+                    </button>
+                    <span className="w-10 text-center text-sm font-bold text-slate-800">
+                      {quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setQuantity((q) => q + 1)}
+                      className="p-2 text-slate-600 hover:bg-slate-50 transition-colors"
+                      aria-label="Increase quantity"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
 
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button
-                size="lg"
-                className="flex-1 flex items-center justify-center gap-2"
-                onClick={handleAddToCart}
-                isLoading={isAdding}
-                disabled={product.status !== 'ACTIVE'}
-              >
-                {isAdded ? (
-                  <>
-                    <Check className="h-5 w-5" />
-                    Added to Cart!
-                  </>
-                ) : (
-                  <>
-                    <ShoppingCart className="h-5 w-5" />
-                    Add to Cart • {formatCurrency((product.salePrice ?? product.basePrice) * quantity)}
-                  </>
-                )}
-              </Button>
-            </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    size="lg"
+                    className="flex-1 flex items-center justify-center gap-2"
+                    onClick={handleAddToCart}
+                    isLoading={isAdding}
+                    disabled={product.status !== 'ACTIVE'}
+                  >
+                    {isAdded ? (
+                      <>
+                        <Check className="h-5 w-5" />
+                        Added to Cart!
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart className="h-5 w-5" />
+                        Add to Cart • {formatCurrency((product.salePrice ?? product.basePrice) * quantity)}
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="rounded-xl border border-indigo-200 bg-indigo-50/70 p-5 space-y-3">
+                <div className="flex items-center gap-2 text-indigo-950 font-bold text-sm">
+                  <ShieldCheck className="h-5 w-5 text-indigo-600" />
+                  <span>Administrator Preview Mode</span>
+                </div>
+                <p className="text-xs text-indigo-800 leading-relaxed">
+                  You are viewing this product with Administrator privileges. Product ordering and cart checkouts are reserved exclusively for Customer accounts.
+                </p>
+                <div className="pt-1 flex flex-wrap items-center gap-2.5">
+                  <Link href="/admin/inventory">
+                    <Button variant="outline" size="sm" className="bg-white text-indigo-700 border-indigo-300 hover:bg-indigo-100">
+                      View Stock &amp; Warehouse
+                    </Button>
+                  </Link>
+                  <Link href="/admin">
+                    <Button size="sm" className="bg-indigo-600 text-white hover:bg-indigo-700">
+                      Open Admin Portal
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Value Props & Architectural Trust Highlights */}
