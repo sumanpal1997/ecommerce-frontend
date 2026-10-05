@@ -1,0 +1,76 @@
+name: Frontend CI/CD Pipeline
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  build-and-test:
+    name: Typecheck & Production Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Next.js Production Build
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1' }}
+
+  deploy:
+    name: Continuous Deployment to Live Server
+    needs: build-and-test
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Deployment Path A: Cloud Platform Webhook (Vercel, Netlify, Render Deploy Hook)
+      - name: Trigger Cloud Platform Deploy Hook (if configured)
+        if: env.DEPLOY_HOOK_URL != ''
+        env:
+          DEPLOY_HOOK_URL: ${{ secrets.DEPLOY_HOOK_URL }}
+        run: |
+          echo "🚀 Triggering frontend deployment hook..."
+          curl -s -X POST "$DEPLOY_HOOK_URL"
+          echo "✅ Deploy signal received."
+
+      # Deployment Path B: Direct SSH Deploy to Linux VPS (if SSH secrets configured)
+      - name: Deploy to Live Linux VPS via SSH (if configured)
+        if: env.SSH_HOST != ''
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
+        run: |
+          echo "🚀 Initiating zero-downtime frontend deployment to live VPS ($SSH_HOST)..."
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh -o StrictHostKeyChecking=no -p "$SSH_PORT" -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" << 'EOF'
+            set -e
+            cd /opt/shopflow/ecommerce-frontend || cd ~/shopflow/ecommerce-frontend
+            echo "📥 Pulling latest commits from git remote..."
+            git pull origin master || git pull origin main
+            echo "📦 Installing production dependencies..."
+            npm ci
+            echo "🔨 Building Next.js standalone bundle..."
+            npm run build
+            echo "🔄 Gracefully reloading frontend server..."
+            pm2 reload ecosystem.config.js || pm2 reload frontend || docker compose restart frontend || sudo systemctl restart shopflow-frontend
+            echo "✅ Live frontend deployment completed successfully!"
+          EOF
