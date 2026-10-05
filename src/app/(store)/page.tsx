@@ -3,7 +3,6 @@
 import React, { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import {
   Sparkles,
@@ -13,11 +12,9 @@ import {
   RotateCcw,
   Star,
   ArrowRight,
-  SlidersHorizontal,
   X,
   CheckCircle2,
   Mail,
-  Layers,
   Cpu,
   Lock,
 } from 'lucide-react';
@@ -45,6 +42,14 @@ function StoreContent() {
     queryFn: productApi.getCategories,
   });
 
+  // Fallback category pills for immediate render
+  const defaultCategories = [
+    { id: 'cat_electronics', name: 'Electronics', slug: 'electronics' },
+    { id: 'cat_apparel', name: 'Apparel', slug: 'apparel' },
+    { id: 'cat_home', name: 'Home & Living', slug: 'home' },
+  ];
+  const displayCategories = categories.length > 0 ? categories : defaultCategories;
+
   // Fetch Products with reactive parameters
   const { data: productsData, isLoading } = useQuery({
     queryKey: ['products', { search, category: category || undefined, brand: brand || undefined, sortBy }],
@@ -60,7 +65,7 @@ function StoreContent() {
 
   const products = productsData?.items || [];
 
-  // Update URL parameters
+  // Update URL parameters without jumping to the top of the page
   const updateQuery = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
     Object.entries(updates).forEach(([key, value]) => {
@@ -70,11 +75,11 @@ function StoreContent() {
         params.set(key, value);
       }
     });
-    router.push(params.toString() ? `/?${params.toString()}` : '/');
+    router.push(params.toString() ? `/?${params.toString()}` : '/', { scroll: false });
   };
 
   const handleClearFilters = () => {
-    router.push('/');
+    router.push('/', { scroll: false });
   };
 
   const handleNewsletterSubmit = (e: React.FormEvent) => {
@@ -111,22 +116,22 @@ function StoreContent() {
       subtitle: 'Kitchen & Ergonomics',
       description: 'Commercial-grade Breville Touch espresso machines & Herman Miller Aeron task chairs.',
       slug: 'home',
-      image: 'https://images.unsplash.com/photo-1580481077195-c3c2f1f00889?w=800&auto=format&fit=crop&q=80',
+      image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&auto=format&fit=crop&q=80',
       itemCount: '2 Products',
       highlight: 'Ergonomic Choice',
     },
   ];
 
   return (
-    <div className="space-y-16 pb-20">
+    <div className="space-y-16 pb-20 bg-slate-50 min-h-screen text-slate-900">
       {/* 1. HERO SECTION */}
-      <section className="relative overflow-hidden bg-slate-900 text-white">
+      <section className="relative overflow-hidden bg-slate-950 text-white">
         {/* Subtle decorative glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-indigo-600/25 blur-[140px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-indigo-600/30 blur-[150px] rounded-full pointer-events-none" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28">
           <div className="text-center space-y-6 max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-1.5 text-xs font-semibold text-indigo-300">
+            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-4 py-1.5 text-xs font-semibold text-indigo-300">
               <Sparkles className="h-4 w-4 text-indigo-400" />
               <span>Modular Monolith • High-Concurrency Architecture</span>
             </div>
@@ -165,7 +170,7 @@ function StoreContent() {
 
             {/* 4 Feature Trust Badges */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-10 border-t border-slate-800 text-xs text-slate-300 text-left">
-              <div className="flex items-center gap-3 bg-slate-800/40 rounded-xl p-3 border border-slate-800">
+              <div className="flex items-center gap-3 bg-slate-900/80 rounded-xl p-3.5 border border-slate-800">
                 <Truck className="h-5 w-5 text-indigo-400 shrink-0" />
                 <div>
                   <p className="font-bold text-white">Free Express Shipping</p>
@@ -173,7 +178,7 @@ function StoreContent() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 bg-slate-800/40 rounded-xl p-3 border border-slate-800">
+              <div className="flex items-center gap-3 bg-slate-900/80 rounded-xl p-3.5 border border-slate-800">
                 <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0" />
                 <div>
                   <p className="font-bold text-white">Atomic Stock Guard</p>
@@ -181,7 +186,7 @@ function StoreContent() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 bg-slate-800/40 rounded-xl p-3 border border-slate-800">
+              <div className="flex items-center gap-3 bg-slate-900/80 rounded-xl p-3.5 border border-slate-800">
                 <Zap className="h-5 w-5 text-amber-400 shrink-0" />
                 <div>
                   <p className="font-bold text-white">Instant &lt;1ms Search</p>
@@ -189,7 +194,7 @@ function StoreContent() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 bg-slate-800/40 rounded-xl p-3 border border-slate-800">
+              <div className="flex items-center gap-3 bg-slate-900/80 rounded-xl p-3.5 border border-slate-800">
                 <RotateCcw className="h-5 w-5 text-purple-400 shrink-0" />
                 <div>
                   <p className="font-bold text-white">30-Day Guarantee</p>
@@ -209,12 +214,12 @@ function StoreContent() {
               <p className="text-xs font-bold uppercase tracking-wider text-indigo-600">
                 Curated Departments
               </p>
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl mt-1">
+              <h2 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl mt-1">
                 Explore by Category
               </h2>
             </div>
-            <span className="text-xs text-slate-500 hidden sm:inline">
-              12 Premium Products across 11 Taxonomy Nodes
+            <span className="text-xs font-medium text-slate-500 hidden sm:inline">
+              12 Verified Products across 11 Taxonomy Nodes
             </span>
           </div>
 
@@ -224,11 +229,11 @@ function StoreContent() {
               return (
                 <div
                   key={card.slug}
-                  onClick={() => updateQuery({ category: card.slug })}
-                  className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 cursor-pointer shadow-xs hover:shadow-xl ${
+                  onClick={() => updateQuery({ category: isSelected ? null : card.slug })}
+                  className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 cursor-pointer shadow-sm hover:shadow-xl ${
                     isSelected
-                      ? 'border-indigo-600 ring-2 ring-indigo-600/30'
-                      : 'border-slate-200 hover:border-slate-300'
+                      ? 'border-indigo-600 ring-4 ring-indigo-600/20'
+                      : 'border-slate-200 hover:border-indigo-400'
                   }`}
                 >
                   {/* Background Image */}
@@ -240,7 +245,7 @@ function StoreContent() {
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/50 to-transparent" />
                   </div>
 
                   {/* Card Content Overlay */}
@@ -249,13 +254,13 @@ function StoreContent() {
                       <span className="rounded-full bg-white/20 backdrop-blur-md px-3 py-1 text-[11px] font-semibold tracking-wide">
                         {card.itemCount}
                       </span>
-                      <span className="rounded-full bg-indigo-600/90 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                      <span className="rounded-full bg-indigo-600 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
                         {card.highlight}
                       </span>
                     </div>
 
                     <div className="space-y-1">
-                      <p className="text-xs font-medium text-indigo-300 uppercase tracking-wider">
+                      <p className="text-xs font-semibold text-indigo-300 uppercase tracking-wider">
                         {card.subtitle}
                       </p>
                       <h3 className="text-xl font-bold text-white group-hover:text-indigo-200 transition-colors">
@@ -265,7 +270,7 @@ function StoreContent() {
                         {card.description}
                       </p>
                       <div className="pt-3 flex items-center gap-1.5 text-xs font-bold text-indigo-300 group-hover:translate-x-1 transition-transform">
-                        <span>{isSelected ? 'Currently Viewing' : 'View Collection'}</span>
+                        <span>{isSelected ? '✓ Filter Active' : 'View Collection'}</span>
                         <ArrowRight className="h-3.5 w-3.5" />
                       </div>
                     </div>
@@ -282,7 +287,7 @@ function StoreContent() {
         {/* Title & Filter Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+            <h2 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
               {search ? (
                 <span>
                   Search results for &ldquo;<span className="text-indigo-600">{search}</span>&rdquo;
@@ -293,20 +298,20 @@ function StoreContent() {
                 'All Featured Products'
               )}
             </h2>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-slate-500 mt-1 font-medium">
               Showing {products.length} {products.length === 1 ? 'item' : 'items'} • Verified live warehouse stock
             </p>
           </div>
 
           {/* Sort Selector */}
           <div className="flex items-center gap-3">
-            <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">
+            <span className="text-xs font-semibold text-slate-600 whitespace-nowrap">
               Sort by:
             </span>
             <select
               value={sortBy}
               onChange={(e) => updateQuery({ sortBy: e.target.value })}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 shadow-2xs focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600 cursor-pointer"
             >
               <option value="newest">Newest Arrivals</option>
               <option value="price_asc">Price: Low to High</option>
@@ -316,114 +321,125 @@ function StoreContent() {
           </div>
         </div>
 
-        {/* Category Filter Pills Bar */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-            <button
-              type="button"
-              onClick={() => updateQuery({ category: null })}
-              className={`rounded-full px-4 py-2 text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-                !category
-                  ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-200'
-                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
-              }`}
-            >
-              All Collections ({productsData?.meta ? (productsData.meta as any).totalItems || 12 : 12})
-            </button>
+        {/* Toolbar Container */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4 shadow-2xs">
+          {/* Category Filter Pills Bar */}
+          <div>
+            <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+              Filter by Department:
+            </span>
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              <button
+                type="button"
+                onClick={() => updateQuery({ category: null })}
+                className={`rounded-full px-4 py-2 text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                  !category
+                    ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-200'
+                    : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                All Collections ({category || brand || search ? products.length : 12})
+              </button>
 
-            {categories.map((cat) => {
-              const isSelected = category === cat.slug;
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => updateQuery({ category: cat.slug })}
-                  className={`rounded-full px-4 py-2 text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
-                    isSelected
-                      ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-200'
-                      : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  {cat.name}
-                </button>
-              );
-            })}
+              {displayCategories.map((cat) => {
+                const isSelected = category === cat.slug;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => updateQuery({ category: isSelected ? null : cat.slug })}
+                    className={`rounded-full px-4 py-2 text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
+                      isSelected
+                        ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-200'
+                        : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {cat.name}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Quick Brand Filter Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs">
-            <span className="font-semibold text-slate-400 whitespace-nowrap pl-1">
-              Brands:
+          <div className="pt-2 border-t border-slate-100">
+            <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+              Filter by Brand:
             </span>
-            {brands.map((b) => {
-              const isBrandSelected = brand === b;
-              return (
-                <button
-                  key={b}
-                  type="button"
-                  onClick={() => updateQuery({ brand: isBrandSelected ? null : b })}
-                  className={`rounded-lg px-2.5 py-1 transition-colors whitespace-nowrap cursor-pointer ${
-                    isBrandSelected
-                      ? 'bg-slate-900 text-white font-bold'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  {b}
-                </button>
-              );
-            })}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs">
+              {brands.map((b) => {
+                const isBrandSelected = brand.toLowerCase() === b.toLowerCase();
+                return (
+                  <button
+                    key={b}
+                    type="button"
+                    onClick={() => updateQuery({ brand: isBrandSelected ? null : b })}
+                    className={`rounded-lg px-3 py-1.5 transition-all whitespace-nowrap cursor-pointer font-medium border ${
+                      isBrandSelected
+                        ? 'bg-indigo-600 text-white border-indigo-600 font-bold shadow-xs'
+                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {b}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        {/* Active Filters Summary Pill Bar (Shows if any filter is active) */}
-        {(category || brand || search) && (
-          <div className="flex flex-wrap items-center gap-2 pt-2 pb-1">
-            <span className="text-xs text-slate-500 font-medium">Active filters:</span>
-            {category && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 border border-indigo-100">
-                Category: <span className="capitalize">{category}</span>
-                <button
-                  type="button"
-                  onClick={() => updateQuery({ category: null })}
-                  className="hover:text-indigo-900 ml-0.5"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </span>
-            )}
-            {brand && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-800 border border-slate-200">
-                Brand: {brand}
-                <button
-                  type="button"
-                  onClick={() => updateQuery({ brand: null })}
-                  className="hover:text-slate-900 ml-0.5"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </span>
-            )}
-            {search && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800 border border-amber-200">
-                Search: &ldquo;{search}&rdquo;
-                <button
-                  type="button"
-                  onClick={() => updateQuery({ search: null })}
-                  className="hover:text-amber-900 ml-0.5"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </span>
-            )}
-            <button
-              type="button"
-              onClick={handleClearFilters}
-              className="text-xs font-semibold text-indigo-600 hover:text-indigo-500 underline ml-2 cursor-pointer"
-            >
-              Clear all filters
-            </button>
-          </div>
-        )}
+          {/* Active Filters Summary Pill Bar */}
+          {(category || brand || search) && (
+            <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-100">
+              <span className="text-xs text-slate-500 font-medium">Active filters:</span>
+              {category && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 border border-indigo-200">
+                  Category: <span className="capitalize">{category}</span>
+                  <button
+                    type="button"
+                    onClick={() => updateQuery({ category: null })}
+                    className="hover:text-indigo-900 ml-1 p-0.5 cursor-pointer"
+                    aria-label="Remove category filter"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </span>
+              )}
+              {brand && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 border border-indigo-200">
+                  Brand: {brand}
+                  <button
+                    type="button"
+                    onClick={() => updateQuery({ brand: null })}
+                    className="hover:text-indigo-900 ml-1 p-0.5 cursor-pointer"
+                    aria-label="Remove brand filter"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </span>
+              )}
+              {search && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800 border border-amber-200">
+                  Search: &ldquo;{search}&rdquo;
+                  <button
+                    type="button"
+                    onClick={() => updateQuery({ search: null })}
+                    className="hover:text-amber-900 ml-1 p-0.5 cursor-pointer"
+                    aria-label="Remove search filter"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={handleClearFilters}
+                className="text-xs font-bold text-indigo-600 hover:text-indigo-800 underline ml-2 cursor-pointer"
+              >
+                Clear all filters
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Product Grid Component */}
         <ProductGrid
@@ -432,16 +448,19 @@ function StoreContent() {
           emptyMessage={
             search
               ? `No products found matching "${search}". Try searching for another brand or clearing filters.`
+              : brand
+              ? `No products currently available for brand "${brand}". Try selecting another brand or clearing filters.`
               : `No products are currently available matching the active filter criteria.`
           }
+          onResetFilters={handleClearFilters}
         />
       </section>
 
       {/* 4. SYSTEM DESIGN ARCHITECTURE SHOWCASE */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white p-8 sm:p-12 lg:p-16">
+        <div className="rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white p-8 sm:p-12 lg:p-16 shadow-xl">
           <div className="max-w-2xl space-y-4 mb-10">
-            <div className="inline-flex items-center gap-2 rounded-full bg-indigo-500/20 px-3 py-1 text-xs font-semibold text-indigo-300 border border-indigo-500/30">
+            <div className="inline-flex items-center gap-2 rounded-full bg-indigo-500/20 px-3.5 py-1 text-xs font-semibold text-indigo-300 border border-indigo-500/30">
               <Cpu className="h-3.5 w-3.5 text-indigo-400" />
               <span>Production Systems Architecture</span>
             </div>
@@ -493,16 +512,16 @@ function StoreContent() {
           <p className="text-xs font-bold uppercase tracking-wider text-indigo-600">
             Real Customer Reviews
           </p>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+          <h2 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
             Trusted by Builders &amp; Creators
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 font-medium">
             Over 2,400+ verified orders delivered with a 99.8% customer satisfaction rating.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-4">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
             <div className="flex text-amber-400">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star key={i} className="h-4 w-4 fill-current" />
@@ -514,13 +533,13 @@ function StoreContent() {
             <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-slate-900">Sarah Jenkins</p>
-                <p className="text-[11px] text-slate-400">Senior Staff Engineer</p>
+                <p className="text-[11px] text-slate-400 font-medium">Senior Staff Engineer</p>
               </div>
               <Badge variant="success" className="text-[10px]">Verified Buyer</Badge>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-4">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
             <div className="flex text-amber-400">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star key={i} className="h-4 w-4 fill-current" />
@@ -532,13 +551,13 @@ function StoreContent() {
             <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-slate-900">David Martinez</p>
-                <p className="text-[11px] text-slate-400">Workspace Architect</p>
+                <p className="text-[11px] text-slate-400 font-medium">Workspace Architect</p>
               </div>
               <Badge variant="success" className="text-[10px]">Verified Buyer</Badge>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-4">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
             <div className="flex text-amber-400">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star key={i} className="h-4 w-4 fill-current" />
@@ -550,7 +569,7 @@ function StoreContent() {
             <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-slate-900">Elena Rostova</p>
-                <p className="text-[11px] text-slate-400">Tech Lead &amp; Creator</p>
+                <p className="text-[11px] text-slate-400 font-medium">Tech Lead &amp; Creator</p>
               </div>
               <Badge variant="success" className="text-[10px]">Verified Buyer</Badge>
             </div>
@@ -560,7 +579,7 @@ function StoreContent() {
 
       {/* 6. VIP NEWSLETTER CLUB */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-2xl bg-indigo-50 border border-indigo-100 p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="rounded-2xl bg-indigo-50 border border-indigo-200 p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-xs">
           <div className="space-y-2 max-w-md">
             <div className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-700">
               <Mail className="h-4 w-4" />
@@ -569,7 +588,7 @@ function StoreContent() {
             <h3 className="text-2xl font-bold text-slate-900">
               Unlock 15% Off Your Next Order
             </h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed font-medium">
               Subscribe to receive private sale invites, new arrival notifications, and early access to hardware drops.
             </p>
           </div>
@@ -605,7 +624,7 @@ export default function StoreHomePage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-[500px] items-center justify-center">
+        <div className="flex min-h-[500px] items-center justify-center bg-slate-50">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
         </div>
       }
