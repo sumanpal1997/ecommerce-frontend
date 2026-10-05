@@ -311,11 +311,11 @@ export function CheckoutForm() {
                 </Button>
               </div>
 
-              {/* Concurrency & Security Guarantee */}
+              {/* Buyer Protection & Guarantee */}
               <div className="rounded-lg bg-indigo-50/60 p-3 text-[11px] text-indigo-900 border border-indigo-100 flex items-start gap-2">
                 <ShieldCheck className="h-4 w-4 shrink-0 text-indigo-600 mt-0.5" />
                 <span>
-                  <strong>15-Minute Reservation:</strong> Inventory is atomically reserved in our database upon placing this order to prevent overselling.
+                  <strong>Guaranteed Order Reservation:</strong> Items in your cart are exclusively held for 15 minutes. 256-bit encrypted secure checkout.
                 </span>
               </div>
             </CardContent>

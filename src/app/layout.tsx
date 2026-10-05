@@ -19,9 +19,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'ShopFlow | Enterprise E-Commerce Platform',
+  title: 'ShopFlow | Premium Curated Lifestyle & Modern Tech Store',
   description:
-    'A high-performance, modular monolith e-commerce platform built with Next.js, Express, MongoDB, and TypeScript.',
+    'Discover premium lifestyle essentials, flagship technology, ergonomic office furniture, and artisan goods with complimentary 2-day delivery and certified authenticity.',
 };
 
 export default function RootLayout({

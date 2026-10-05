@@ -90,7 +90,7 @@ export default function OrdersPage() {
               Sign In to View Orders
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-              Your order history, delivery telemetry, and immutable line-item price freeze snapshots are tied to your verified customer account.
+              Your order history, tracking updates, and itemized purchase receipts are securely saved in your customer account.
             </p>
           </div>
 
@@ -107,19 +107,28 @@ export default function OrdersPage() {
             </Link>
           </div>
 
-          {/* Quick Demo Credentials Helper */}
-          <div className="mt-8 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4 text-left max-w-md mx-auto space-y-2 text-xs">
-            <div className="flex items-center gap-1.5 font-bold text-indigo-900">
-              <Sparkles className="h-4 w-4 text-indigo-600" />
-              <span>Demo Account Credentials</span>
+          {/* Production Account Benefits */}
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 text-left max-w-xl mx-auto text-xs">
+            <div className="rounded-xl border border-slate-100 bg-white p-3.5 shadow-xs">
+              <div className="font-semibold text-slate-900 mb-1">Live Tracking</div>
+              <p className="text-slate-500 text-[11px] leading-relaxed">Pinpoint courier package updates and real-time transit notifications.</p>
             </div>
-            <p className="text-slate-600">
-              Test customer order history using the seeded account:
-            </p>
-            <div className="rounded-lg bg-white p-2.5 font-mono text-[11px] text-slate-800 border border-indigo-100 space-y-1">
-              <div>Email: <strong className="text-indigo-600">customer@shopflow.dev</strong></div>
-              <div>Password: <strong className="text-indigo-600">Password123!</strong></div>
+            <div className="rounded-xl border border-slate-100 bg-white p-3.5 shadow-xs">
+              <div className="font-semibold text-slate-900 mb-1">Warranty Hub</div>
+              <p className="text-slate-500 text-[11px] leading-relaxed">Instant access to certified authentic receipts and warranty registrations.</p>
             </div>
+            <div className="rounded-xl border border-slate-100 bg-white p-3.5 shadow-xs">
+              <div className="font-semibold text-slate-900 mb-1">Hassle-Free Returns</div>
+              <p className="text-slate-500 text-[11px] leading-relaxed">Generate prepaid return labels in under 60 seconds with no paperwork.</p>
+            </div>
+          </div>
+
+          {/* Quick Evaluator Access */}
+          <div className="mt-6 rounded-xl border border-indigo-100/60 bg-indigo-50/40 p-3 text-center max-w-md mx-auto text-[11px] text-slate-500">
+            <span>Evaluator Preview Account: </span>
+            <code className="text-indigo-700 font-semibold mx-1">customer@shopflow.dev</code>
+            <span>/</span>
+            <code className="text-indigo-700 font-semibold mx-1">Password123!</code>
           </div>
         </div>
       </div>
@@ -145,13 +154,13 @@ export default function OrdersPage() {
         <div className="space-y-1.5">
           <div className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 border border-indigo-100">
             <ShieldCheck className="h-3.5 w-3.5 text-indigo-600" />
-            <span>Zero-Trust Order Snapshot Engine</span>
+            <span>Verified Purchase History</span>
           </div>
           <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
             My Orders &amp; Receipts
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 max-w-xl">
-            Track order fulfillment state transitions, view itemized price-frozen receipts, and simulate mock payment webhooks in real-time.
+            Track delivery milestones, review itemized invoices, and manage shipment updates across all your purchases.
           </p>
         </div>
 
@@ -182,7 +191,7 @@ export default function OrdersPage() {
           <p className="text-2xl font-black text-amber-600 mt-1">
             {pendingCount}
           </p>
-          <span className="text-[11px] text-slate-500 font-medium">Awaiting simulation</span>
+          <span className="text-[11px] text-slate-500 font-medium">Awaiting payment</span>
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
@@ -197,7 +206,7 @@ export default function OrdersPage() {
 
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
           <span className="block text-[11px] font-bold uppercase tracking-wider text-emerald-600">
-            Total Capital Committed
+            Total Lifetime Spend
           </span>
           <p className="text-2xl font-black text-slate-900 mt-1">
             {formatCurrency(totalLifetimeSpend)}

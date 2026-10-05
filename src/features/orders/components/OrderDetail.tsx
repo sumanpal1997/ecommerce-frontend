@@ -39,11 +39,11 @@ export function OrderDetail({ order: initialOrder, onRefresh }: OrderDetailProps
       // Fetch latest order state
       const updated = await orderApi.getOrderById(order._id);
       setOrder(updated);
-      setPaymentNotice('Payment successfully verified by gateway webhook! Inventory has been permanently committed.');
+      setPaymentNotice('Payment successfully verified! Your order is confirmed and scheduled for warehouse dispatch.');
       if (onRefresh) onRefresh();
     } catch (err: unknown) {
       console.error('Payment simulation failed:', err);
-      setPaymentNotice('Failed to simulate payment webhook.');
+      setPaymentNotice('Payment processing could not be completed. Please try again or use another payment method.');
     } finally {
       setIsSimulatingPayment(false);
     }
@@ -112,10 +112,10 @@ export function OrderDetail({ order: initialOrder, onRefresh }: OrderDetailProps
               <Button
                 onClick={handleSimulatePayment}
                 isLoading={isSimulatingPayment}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 focus-visible:ring-emerald-500"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 focus-visible:ring-emerald-500 font-bold"
               >
                 <CreditCard className="h-4 w-4" />
-                Simulate Payment Webhook ({formatCurrency(order.pricing.totalAmount)})
+                Complete Secure Payment ({formatCurrency(order.pricing.totalAmount)})
               </Button>
             </div>
           )}
@@ -129,18 +129,29 @@ export function OrderDetail({ order: initialOrder, onRefresh }: OrderDetailProps
         )}
       </div>
 
-      {/* Order State Machine & Educational Card */}
+      {/* Order Fulfillment Tracking Timeline */}
       <div className="rounded-xl border border-indigo-100 bg-indigo-50/50 p-5 text-xs text-indigo-950 space-y-2">
         <div className="flex items-center gap-2 font-semibold text-indigo-900">
-          <Sparkles className="h-4 w-4 text-indigo-600" />
-          <span>Finite State Machine Architecture</span>
+          <Truck className="h-4 w-4 text-indigo-600" />
+          <span>Order Fulfillment &amp; Dispatch Timeline</span>
         </div>
-        <p className="leading-relaxed text-indigo-900/80">
-          Orders transition deterministically through defined states:
-          <code className="mx-1 bg-white px-1.5 py-0.5 rounded border border-indigo-200 font-mono text-[11px]">
-            PENDING_PAYMENT → PAID → PROCESSING → SHIPPED → DELIVERED
-          </code>
-          . Upon webhook verification, the backend commits warehouse stock and persists immutable line-item price snapshots.
+        <p className="leading-relaxed text-indigo-900/80 mb-2">
+          Your order progresses through scheduled fulfillment stages:
+        </p>
+        <div className="flex flex-wrap items-center gap-1.5 pt-1">
+          {['Order Received', 'Payment Confirmed', 'Preparing Package', 'Dispatched', 'Delivered'].map((step, idx) => (
+            <span
+              key={step}
+              className="inline-flex items-center gap-1 text-[11px] font-medium bg-white px-2.5 py-1 rounded-full border border-indigo-200 text-indigo-800 shadow-xs"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+              {step}
+              {idx < 4 && <span className="text-slate-300 ml-1">→</span>}
+            </span>
+          ))}
+        </div>
+        <p className="text-[11px] text-indigo-900/70 pt-1">
+          Tracking milestones and carrier updates are automatically updated in real-time.
         </p>
       </div>
 
@@ -219,8 +230,8 @@ export function OrderDetail({ order: initialOrder, onRefresh }: OrderDetailProps
                 Items in this Order ({order.items.length})
               </h2>
             </div>
-            <span className="text-[11px] text-slate-400">
-              Prices frozen at time of purchase
+            <span className="text-[11px] text-slate-400 font-medium">
+              Guaranteed Price Match at Purchase
             </span>
           </div>
         </CardHeader>

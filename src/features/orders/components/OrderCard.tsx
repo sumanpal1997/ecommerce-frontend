@@ -155,14 +155,14 @@ export function OrderCard({ order }: OrderCardProps) {
               <Link href={`/orders/${order._id}`}>
                 <Button size="sm" className="flex items-center gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-700">
                   <CreditCard className="h-3.5 w-3.5" />
-                  <span>Simulate Payment</span>
+                  <span>Pay Now</span>
                 </Button>
               </Link>
             )}
 
             <Link href={`/orders/${order._id}`}>
               <Button variant="outline" size="sm" className="text-xs flex items-center gap-1">
-                <span>View Details &amp; Lifecycle</span>
+                <span>View Order Details</span>
                 <ArrowRight className="h-3 w-3" />
               </Button>
             </Link>

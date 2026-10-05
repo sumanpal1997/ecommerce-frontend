@@ -25,6 +25,7 @@ import {
   CheckCircle2,
   Package,
   CreditCard,
+  Truck,
 } from 'lucide-react';
 import { useAuth } from '@/features/auth/context/auth-context';
 import { useCart } from '@/features/cart/context/cart-context';
@@ -75,15 +76,15 @@ const navMenus: NavMenuItem[] = [
     label: 'All Catalog',
     href: '/',
     badge: '12 Items',
-    tagline: 'Enterprise Storefront Catalog',
-    description: 'Browse all 12 verified products across 3 curated departments and 8 premier brand partners.',
+    tagline: 'Curated Premium Collections',
+    description: 'Discover handpicked personal electronics, technical outerwear, and ergonomic workspace furniture.',
     subcategories: [
       {
         name: 'Consumer Electronics',
         slug: 'electronics',
         href: '/?category=electronics',
         icon: Laptop,
-        description: 'M3 Max workstations, ANC headphones & titanium smartwatches',
+        description: 'Pro laptops, noise-canceling headphones & titanium smartwatches',
         count: '6 Products',
       },
       {
@@ -152,7 +153,7 @@ const navMenus: NavMenuItem[] = [
         slug: 'wearables',
         href: '/?category=wearables',
         icon: Watch,
-        description: 'Apple Watch Ultra 2 Titanium GPS + Cellular telemetry',
+        description: 'Apple Watch Ultra 2 Titanium GPS + Cellular fitness',
         count: '1 Product',
       },
     ],
@@ -504,7 +505,7 @@ function HeaderNavLinks() {
                 <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2 text-slate-500">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                    <span>Free express shipping over $100 • Zero overselling stock guarantee</span>
+                    <span>Free express delivery over $100 • 30-day money-back guarantee • 2-year warranty</span>
                   </div>
                   <Link
                     href={menu.href}
@@ -624,18 +625,18 @@ export function Header() {
       <div className="bg-slate-900 px-4 py-2 text-center text-xs text-slate-300 font-medium tracking-wide">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
           <span className="hidden md:inline-flex items-center gap-1.5 text-indigo-400">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>High-Concurrency Modular Monolith</span>
+            <Truck className="h-3.5 w-3.5" />
+            <span>Complimentary 2-Day Shipping Over $100</span>
           </span>
           <p className="mx-auto md:mx-0">
-            <strong>Free Express Shipping</strong> on all orders over $100 • Use code{' '}
+            <strong>Spring Collection Sale</strong> • Use code{' '}
             <span className="bg-indigo-600/40 text-indigo-300 px-1.5 py-0.5 rounded font-mono font-bold">
               SHOPFLOW10
             </span>{' '}
-            for 10% off
+            for 10% off your first order
           </p>
           <span className="hidden lg:inline text-slate-400">
-            Atomic Inventory Guard • Zero Overselling
+            100% Certified Authentic • 30-Day Returns
           </span>
         </div>
       </div>
@@ -652,7 +653,7 @@ export function Header() {
                 SHOPFLOW
               </span>
               <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 leading-none mt-0.5">
-                ENTERPRISE
+                STUDIO
               </span>
             </div>
           </Link>

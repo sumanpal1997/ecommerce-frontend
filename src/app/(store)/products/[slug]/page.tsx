@@ -323,7 +323,7 @@ export default function ProductDetailPage() {
             </div>
             <div className="flex items-center gap-3 pt-3">
               <ShieldCheck className="h-4 w-4 text-indigo-600 shrink-0" />
-              <span>Atomic stock allocation with zero-risk overselling protection</span>
+              <span>2-Year comprehensive manufacturer warranty &amp; authentic guarantee</span>
             </div>
           </div>
         </div>

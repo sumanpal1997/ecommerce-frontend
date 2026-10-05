@@ -79,7 +79,7 @@ const categoryMetaMap: Record<string, CategoryMeta> = {
   electronics: {
     title: 'Consumer Electronics & Computing',
     department: 'Consumer Electronics',
-    tagline: 'Flagship M3 Max workstations, spatial audio & telemetry smartwatches',
+    tagline: 'Flagship M3 Max workstations, spatial audio & smart fitness wearables',
     description:
       'Explore the apex of personal technology—from Apple silicon M3 Max workstations and Dell XPS powerhouses to Sony active noise-cancellation audio.',
     subcategories: [
@@ -119,9 +119,9 @@ const categoryMetaMap: Record<string, CategoryMeta> = {
     brands: ['Apple', 'Dell'],
   },
   wearables: {
-    title: 'Wearables & Telemetry',
+    title: 'Wearables & Smartwatches',
     department: 'Consumer Electronics',
-    tagline: 'Aerospace-grade titanium, precision GPS & biometrics',
+    tagline: 'Aerospace-grade titanium, precision dual-frequency GPS & health tracking',
     description:
       'Military-standard rugged smartwatches with cellular connectivity and multi-day expedition battery life.',
     subcategories: [
@@ -328,7 +328,7 @@ function StoreContent() {
 
                 <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
                   {activeCategoryMeta?.description ||
-                    'Explore our verified inventory with zero-overselling atomic inventory protection and instant checkout.'}
+                    'Explore our curated collection of authentic premium products with complimentary express delivery.'}
                 </p>
 
                 {/* Subcategory Filter Pills directly in the banner */}
@@ -361,10 +361,10 @@ function StoreContent() {
                 <div className="rounded-xl border border-slate-700/80 bg-slate-800/80 p-3.5 text-xs text-slate-300 space-y-1">
                   <div className="flex items-center gap-2 font-bold text-white">
                     <ShieldCheck className="h-4 w-4 text-emerald-400" />
-                    <span>Verified Live Warehouse Stock</span>
+                    <span>In Stock &amp; Ready to Ship</span>
                   </div>
                   <p className="text-[11px] text-slate-400">
-                    Showing {products.length} {products.length === 1 ? 'item' : 'items'} in this department
+                    Showing {products.length} {products.length === 1 ? 'item' : 'items'} • Ships within 24 hours
                   </p>
                 </div>
 
@@ -390,13 +390,13 @@ function StoreContent() {
               <div className="space-y-2">
                 <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-3 py-1 text-xs font-semibold text-indigo-300">
                   <Search className="h-3.5 w-3.5 text-indigo-400" />
-                  <span>Trie Autocomplete Search</span>
+                  <span>Product Search</span>
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-black text-white">
                   Search results for &ldquo;<span className="text-indigo-400">{search}</span>&rdquo;
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-400">
-                  Found {products.length} matching {products.length === 1 ? 'product' : 'products'} in our in-memory catalog index.
+                  Found {products.length} matching {products.length === 1 ? 'product' : 'products'} in our curated catalog.
                 </p>
               </div>
 
@@ -424,18 +424,18 @@ function StoreContent() {
               <div className="text-center space-y-6 max-w-4xl mx-auto">
                 <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-4 py-1.5 text-xs font-semibold text-indigo-300">
                   <Sparkles className="h-4 w-4 text-indigo-400" />
-                  <span>Modular Monolith • High-Concurrency Architecture</span>
+                  <span>Spring / Summer 2026 Collection • New Arrivals</span>
                 </div>
 
                 <h1 className="text-4xl font-black tracking-tight sm:text-6xl lg:text-7xl leading-tight">
-                  Next-Gen Commerce. <br />
+                  Curated Design. <br />
                   <span className="bg-gradient-to-r from-indigo-400 via-purple-300 to-indigo-200 bg-clip-text text-transparent">
-                    Engineered for Scale.
+                    Engineered for Modern Living.
                   </span>
                 </h1>
 
                 <p className="mx-auto max-w-2xl text-base sm:text-lg text-slate-300 font-normal leading-relaxed">
-                  Explore curated flagship electronics, technical outerwear, and modern ergonomic workspaces. Built with zero overselling, zero-trust server-side pricing, and instant &lt;1ms Trie search.
+                  Explore precision-crafted personal audio, high-performance computing, technical outerwear, and modern ergonomic furniture. Designed for uncompromising quality, durability, and daily elegance.
                 </p>
 
                 {/* CTA Buttons */}
@@ -455,7 +455,7 @@ function StoreContent() {
                     onClick={() => updateQuery({ category: 'electronics' })}
                     className="rounded-xl border border-slate-700 bg-slate-800/80 px-6 py-3.5 text-sm font-semibold text-white hover:bg-slate-700 transition-all cursor-pointer"
                   >
-                    Browse Electronics Deals
+                    Explore Tech &amp; Audio
                   </button>
                 </div>
 
@@ -472,16 +472,16 @@ function StoreContent() {
                   <div className="flex items-center gap-3 bg-slate-900/80 rounded-xl p-3.5 border border-slate-800">
                     <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0" />
                     <div>
-                      <p className="font-bold text-white">Atomic Stock Guard</p>
-                      <p className="text-[11px] text-slate-400">Zero overselling protection</p>
+                      <p className="font-bold text-white">Certified Authentic</p>
+                      <p className="text-[11px] text-slate-400">100% genuine brand guarantee</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 bg-slate-900/80 rounded-xl p-3.5 border border-slate-800">
                     <Zap className="h-5 w-5 text-amber-400 shrink-0" />
                     <div>
-                      <p className="font-bold text-white">Instant &lt;1ms Search</p>
-                      <p className="text-[11px] text-slate-400">In-memory Radix Trie</p>
+                      <p className="font-bold text-white">2-Year Warranty</p>
+                      <p className="text-[11px] text-slate-400">Full manufacturer coverage</p>
                     </div>
                   </div>
 
@@ -749,50 +749,50 @@ function StoreContent() {
         />
       </section>
 
-      {/* 3. SYSTEM DESIGN ARCHITECTURE SHOWCASE */}
+      {/* 3. THE SHOPFLOW QUALITY STANDARD */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white p-8 sm:p-12 lg:p-16 shadow-xl">
           <div className="max-w-2xl space-y-4 mb-10">
             <div className="inline-flex items-center gap-2 rounded-full bg-indigo-500/20 px-3.5 py-1 text-xs font-semibold text-indigo-300 border border-indigo-500/30">
-              <Cpu className="h-3.5 w-3.5 text-indigo-400" />
-              <span>Production Systems Architecture</span>
+              <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
+              <span>The ShopFlow Quality Standard</span>
             </div>
             <h2 className="text-2xl font-black tracking-tight sm:text-4xl text-white">
-              Engineered as a Modular Monolith.
+              Uncompromising Quality. Designed to Endure.
             </h2>
             <p className="text-sm text-slate-300 leading-relaxed font-normal">
-              Every architectural decision balances maintainability today with effortless microservices extraction tomorrow.
+              Every item in our collection is curated from premier global innovators who share our dedication to material purity, ergonomic wellness, and enduring design.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="space-y-3 bg-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-xs">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white font-bold">
-                <Zap className="h-5 w-5" />
+                <ShieldCheck className="h-5 w-5" />
               </div>
-              <h3 className="text-base font-bold text-white">In-Memory Trie Autocomplete</h3>
+              <h3 className="text-base font-bold text-white">100% Certified Authentic</h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Rather than executing expensive wildcard database scans on every keystroke, our in-memory Radix Trie delivers instant prefix typeahead suggestions in &lt;1ms.
+                Direct brand partnerships with Apple, Sony, Bose, Breville, Herman Miller, and Patagonia. Every item includes full serialized manufacturer warranties.
               </p>
             </div>
 
             <div className="space-y-3 bg-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-xs">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white font-bold">
-                <ShieldCheck className="h-5 w-5" />
+                <Truck className="h-5 w-5" />
               </div>
-              <h3 className="text-base font-bold text-white">Atomic Concurrency Defense</h3>
+              <h3 className="text-base font-bold text-white">Express Climate-Controlled Dispatch</h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Storage-engine level atomic updates prevent race conditions and eliminate overselling during high-traffic flash sales with automated compensating rollbacks.
+                All inventory is stocked in regional climate-controlled hubs and dispatched within 24 hours with live milestone tracking directly to your door.
               </p>
             </div>
 
             <div className="space-y-3 bg-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-xs">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-600 text-white font-bold">
-                <Lock className="h-5 w-5" />
+                <RotateCcw className="h-5 w-5" />
               </div>
-              <h3 className="text-base font-bold text-white">Zero-Trust Server Pricing</h3>
+              <h3 className="text-base font-bold text-white">30-Day Risk-Free Trial</h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Cart subtotals and discounts are never trusted from the client browser. All line-item prices are validated server-side against live catalog models at checkout.
+                Experience your new workstation chair, espresso machine, or audio headphones in your own home. If you&apos;re not delighted, return it with zero restocking fees.
               </p>
             </div>
           </div>
@@ -806,7 +806,7 @@ function StoreContent() {
             Real Customer Reviews
           </p>
           <h2 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
-            Trusted by Builders &amp; Creators
+            Trusted by Creators &amp; Professionals
           </h2>
           <p className="text-xs text-slate-500 font-medium">
             Over 2,400+ verified orders delivered with a 99.8% customer satisfaction rating.
@@ -821,12 +821,12 @@ function StoreContent() {
               ))}
             </div>
             <p className="text-xs text-slate-600 leading-relaxed italic">
-              &ldquo;The MacBook Pro M3 Max arrived in pristine condition within 24 hours. The slide-out cart and instant checkout was the smoothest purchasing flow I have experienced.&rdquo;
+              &ldquo;The MacBook Pro M3 Max arrived in pristine factory packaging within 24 hours. The Liquid Retina XDR display and battery longevity have elevated my entire creative workflow.&rdquo;
             </p>
             <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-slate-900">Sarah Jenkins</p>
-                <p className="text-[11px] text-slate-400 font-medium">Senior Staff Engineer</p>
+                <p className="text-[11px] text-slate-400 font-medium">Senior Product Designer</p>
               </div>
               <Badge variant="success" className="text-[10px]">Verified Buyer</Badge>
             </div>
@@ -839,12 +839,12 @@ function StoreContent() {
               ))}
             </div>
             <p className="text-xs text-slate-600 leading-relaxed italic">
-              &ldquo;Picked up both the Herman Miller Aeron and the Breville Barista Touch. Build quality and packaging were flawless. Free shipping over $100 saved me substantial freight fees.&rdquo;
+              &ldquo;Investing in the Herman Miller Aeron transformed my daily posture. The breathable 8Z Pellicle suspension keeps me cool all day. Free delivery on such a substantial piece was fantastic.&rdquo;
             </p>
             <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-slate-900">David Martinez</p>
-                <p className="text-[11px] text-slate-400 font-medium">Workspace Architect</p>
+                <p className="text-[11px] text-slate-400 font-medium">Architectural Lead</p>
               </div>
               <Badge variant="success" className="text-[10px]">Verified Buyer</Badge>
             </div>
@@ -857,12 +857,12 @@ function StoreContent() {
               ))}
             </div>
             <p className="text-xs text-slate-600 leading-relaxed italic">
-              &ldquo;The real-time inventory counter is a game changer. During competitive drops, having atomic 15-minute stock reservations guarantees you actually get what you pay for.&rdquo;
+              &ldquo;The Breville Barista Touch makes cafe-quality flat whites in under 3 minutes. The intuitive touchscreen guided me through the exact extraction profile. Exceptional customer care.&rdquo;
             </p>
             <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-slate-900">Elena Rostova</p>
-                <p className="text-[11px] text-slate-400 font-medium">Tech Lead &amp; Creator</p>
+                <p className="text-[11px] text-slate-400 font-medium">Studio Director</p>
               </div>
               <Badge variant="success" className="text-[10px]">Verified Buyer</Badge>
             </div>
