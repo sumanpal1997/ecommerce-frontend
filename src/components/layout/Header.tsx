@@ -23,6 +23,8 @@ import {
   ArrowRight,
   Star,
   CheckCircle2,
+  Package,
+  CreditCard,
 } from 'lucide-react';
 import { useAuth } from '@/features/auth/context/auth-context';
 import { useCart } from '@/features/cart/context/cart-context';
@@ -711,11 +713,21 @@ export function Header() {
                         </div>
 
                         <Link
+                          href="/orders"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
+                        >
+                          <Package className="h-3.5 w-3.5 text-indigo-600" />
+                          <span>My Orders &amp; Receipts</span>
+                        </Link>
+
+                        <Link
                           href="/checkout"
                           onClick={() => setUserDropdownOpen(false)}
-                          className="block px-4 py-2 text-xs text-slate-700 hover:bg-slate-50"
+                          className="flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
                         >
-                          Checkout & Orders
+                          <CreditCard className="h-3.5 w-3.5 text-slate-400" />
+                          <span>Direct Checkout</span>
                         </Link>
 
                         <button
@@ -786,7 +798,21 @@ export function Header() {
             <MobileNavLinks onSelect={() => setMobileMenuOpen(false)} />
           </Suspense>
 
-          {!isAuthenticated && (
+          {isAuthenticated ? (
+            <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
+              <Link
+                href="/orders"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between px-3 py-2 rounded-xl bg-indigo-50 text-indigo-700 text-xs font-bold"
+              >
+                <div className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  <span>My Orders &amp; Receipts</span>
+                </div>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          ) : (
             <div className="pt-3 border-t border-slate-100 flex gap-2">
               <Link href="/login" className="flex-1" onClick={() => setMobileMenuOpen(false)}>
                 <Button variant="outline" size="sm" className="w-full">
